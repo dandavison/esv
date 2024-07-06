@@ -6,8 +6,12 @@ authors = ["Dan Davison <dandavison7@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">=3.10,<3.13"
+manim = "^0.18.1"
 
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.26.0"
+pdbpp = "^0.10.3"
 
 [build-system]
 requires = ["poetry-core"]
