@@ -45,13 +45,9 @@ class Lamp(Object):
 
     def shine_on(self, object: "Object"):
         self.add_child(Ray("ray", start=self, end=object))
-        explanation = esv.explanation.Explanation(
-            "explanation",
-            object,
-            latex=(
-                f"The lamp is shining on {object.name}, because the direction of the lamp intersects with its location."
-                "This is roughly how lamps work."
-            ),
+        self.explain(
+            f"The lamp is shining on {object.name}, because the direction of the lamp intersects with its location."
+            "This is roughly how lamps work."
         )
 
 

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
 from manim import (
     DOWN,
@@ -15,20 +15,18 @@ from manim import (
     Wait,
 )
 
-from esv import Entity, Event
+if TYPE_CHECKING:
+    from esv import Entity
 
 
 @dataclass
-class Explanation(Entity):
-    target: Entity
+class Explanation:
+    target: "Entity"
     latex: str
     width: str = "20em"
     font_family: str = r"\sffamily"
     justification: str = r"\raggedright"
     background_color: str = "#2F2F2F"
-
-    def handle(self, event: Event):
-        pass
 
     def render(self) -> VMobject:
         text = f"{{{self.width}}} {self.font_family} {self.justification} {self.latex}"
@@ -51,9 +49,11 @@ class Explanation(Entity):
         return VGroup(box, arrow)
 
     def animate(self) -> Iterable[Animation]:
-        yield FadeIn(self.mobj)
-        yield Wait(1)
-        yield FadeOut(self.mobj)
+        yield Wait(0.5)
+        mobj = self.render()
+        yield FadeIn(mobj)
+        yield Wait(4)
+        yield FadeOut(mobj)
 
 
 def tex_escape(s: str) -> str:

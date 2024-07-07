@@ -7,6 +7,8 @@ from typing import Callable, ClassVar, Iterable
 
 import manim
 
+from esv.explanation import Explanation
+
 
 @dataclass
 class Event:
@@ -49,6 +51,9 @@ class Entity(ABC):
     def render(self) -> manim.VMobject:
         """VMobject for this entity, without its children."""
         ...
+
+    def explain(self, latex: str):
+        self.animations.append(lambda: Explanation(target=self, latex=latex).animate())
 
     def _update_scene(self, **kwargs):
         """
