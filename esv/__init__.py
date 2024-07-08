@@ -39,8 +39,14 @@ class Entity(ABC):
         """Return True if the event caused the entity state to change, or enqueued animations."""
         ...
 
-        # for child in self.children.values():
-        #     child.handle(event)
+    def _handle(self, event: Event):
+        """
+        Recurse to children, then call user's handle() and update the scene.
+        """
+        for child in self.children.values():
+            child._handle(event)
+        print(f"          {self}")
+        self.handle(event)
 
     # def _get_mobject(self) -> manim.VMobject:
     #     mobj = self.render()
@@ -90,8 +96,7 @@ class Scene(manim.Scene, ABC):
         for event in self.events():
             print(f"🟨 {event}")
             for entity in self.entities.values():
-                print(f"          {entity}")
-                entity.handle(event)
+                entity._handle(event)
                 entity._update_scene()
             self.wait(2)
 
