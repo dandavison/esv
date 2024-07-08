@@ -33,7 +33,8 @@ class Entity(ABC):
         self.children[child.name] = child
 
     @abstractmethod
-    def handle(self, event: Event):
+    def handle(self, event: Event) -> bool:
+        """Return True if the event caused the entity state to change, or enqueued animations."""
         ...
 
         # for child in self.children.values():
