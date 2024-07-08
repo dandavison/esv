@@ -65,7 +65,7 @@ class Entity(ABC):
                 print(f"playing animation {anim} for {self}")
                 self.scene.play(anim)
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return self.name
 
 
@@ -90,6 +90,7 @@ class Scene(manim.Scene, ABC):
         for event in self.events():
             print(f"🟨 {event}")
             for entity in self.entities.values():
+                print(f"          {entity}")
                 entity.handle(event)
                 entity._update_scene()
             self.wait(2)
