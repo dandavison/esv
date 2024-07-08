@@ -3,7 +3,7 @@ import sys
 from abc import ABC, abstractmethod
 from collections import deque
 from dataclasses import dataclass
-from typing import Callable, ClassVar, Iterable
+from typing import Callable, ClassVar, Iterable, Optional
 
 import manim
 
@@ -39,14 +39,15 @@ class Entity(ABC):
         """Return True if the event caused the entity state to change, or enqueued animations."""
         ...
 
-    def _handle(self, event: Event):
+    def _apply_to_tree(self, event: Event):
         """
-        Recurse to children, then call user's handle() and update the scene.
+        Recurse to children, then handle it at this node and update the scene.
         """
         for child in self.children.values():
-            child._handle(event)
+            child._apply_to_tree(event)
         print(f"          {self}")
         self.handle(event)
+        self._update_scene()
 
     # def _get_mobject(self) -> manim.VMobject:
     #     mobj = self.render()
@@ -58,8 +59,10 @@ class Entity(ABC):
         """VMobject for this entity, without its children."""
         ...
 
-    def explain(self, latex: str):
-        self.animations.append(lambda: Explanation(target=self, latex=latex).animate())
+    def explain(self, latex: str, target: Optional["Entity"] = None):
+        self.animations.append(
+            lambda: Explanation(target=target or self, latex=latex).animate()
+        )
 
     def _update_scene(self, **kwargs):
         """
@@ -67,8 +70,8 @@ class Entity(ABC):
         """
         self.mobj.become(self.render(**kwargs).move_to(self.mobj))
         while self.animations:
+            print(f"playing animations for {self}")
             for anim in self.animations.popleft()():
-                print(f"playing animation {anim} for {self}")
                 self.scene.play(anim)
 
     def __str__(self) -> str:
@@ -96,8 +99,7 @@ class Scene(manim.Scene, ABC):
         for event in self.events():
             print(f"🟨 {event}")
             for entity in self.entities.values():
-                entity._handle(event)
-                entity._update_scene()
+                entity._apply_to_tree(event)
             self.wait(2)
 
     def construct(self):
